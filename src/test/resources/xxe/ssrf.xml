@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<!DOCTYPE foo [
+        <!ELEMENT foo ANY >
+        <!ENTITY xxe SYSTEM "https://223.5.5.5/resolve?name=www.aliyun.com" >
+        ]>
+<foo>&xxe;</foo>

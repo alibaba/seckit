@@ -1,0 +1,50 @@
+package com.alibaba.seckit.jdbc.parser;
+
+import com.alibaba.seckit.jdbc.JdbcURLException;
+import com.alibaba.seckit.jdbc.JdbcURLUnsafeException;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ * @author mingyi
+ * @date 2024/2/27
+ */
+public class ElasticSearchParser extends DefaultUrlParser {
+
+    public ElasticSearchParser(String url) throws JdbcURLException {
+        super(url);
+    }
+
+    private final static Pattern HTTP_URL_PATTERN = Pattern.compile("^(https?://)(.*)");
+
+    private String connType = "";
+
+    @Override
+    public void parse() throws JdbcURLException {
+        int separator = initialUrl.indexOf("//");
+        if (separator == -1) {
+            throw new JdbcURLUnsafeException(
+                    "url parsing error : '//' is not present in the url " + initialUrl);
+        }
+        this.scheme = initialUrl.substring(0, separator);
+        String urlSecondPart = initialUrl.substring(separator + 2);
+        Matcher matcher = HTTP_URL_PATTERN.matcher(urlSecondPart);
+        if (matcher.find()) {
+            this.connType = matcher.group(1);
+            this.parseUrlWithoutScheme(matcher.group(2));
+        } else {
+            this.parseUrlWithoutScheme(urlSecondPart);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return this.scheme + "//" +
+                this.connType +
+                this.host +
+                (this.port > -1 ? ":" + this.port : "") +
+                (this.database != null ? "/" + this.database : "/") +
+                (this.properties.isEmpty() ? "" : this.getParamMarker() + this.propertiesToString());
+    }
+}

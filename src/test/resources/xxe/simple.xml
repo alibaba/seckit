@@ -1,0 +1,6 @@
+<!--?xml version="1.0" ?-->
+<!DOCTYPE foo [
+        <!ENTITY example0 "Doe">
+        <!ENTITY example "&example0;">
+        ]>
+<foo>&example;</foo>
