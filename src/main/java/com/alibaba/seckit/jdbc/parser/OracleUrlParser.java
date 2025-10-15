@@ -14,7 +14,6 @@ import java.util.regex.Pattern;
  * Oracle JDBC URL parser.
  * <p>
  * e.g. <code>jdbc:oracle:thin:@tcps://mydbhost1:5521/mydbservice?wallet_location=/work/wallet</code>
- * documentation at <link>https://docs.oracle.com/en/database/oracle/oracle-database/21/jajdb/index.html</link>
  * refers to oracle.jdbc.driver.OracleDriver
  */
 public class OracleUrlParser extends DefaultUrlParser {

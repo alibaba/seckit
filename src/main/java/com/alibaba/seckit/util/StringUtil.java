@@ -2,8 +2,7 @@ package com.alibaba.seckit.util;
 
 /**
  * @author mingyi
- * @date 2025/9/16
- */
+  */
 public class StringUtil {
     public static boolean isEmpty(String str) {
         return str == null || str.isEmpty();

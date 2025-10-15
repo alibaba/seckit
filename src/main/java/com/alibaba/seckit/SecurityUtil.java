@@ -41,16 +41,16 @@ public class SecurityUtil {
 
     /**
      * 给XML解析器增加XXE防护
-     * @param builder 支持以下类型的Builder(Factory)： <br/>
-     *                SAXReader <br/>
-     *                DocumentBuilderFactory <br/>
-     *                SAXParserFactory <br/>
-     *                XMLInputFactory <br/>
-     *                SAXBuilder <br/>
-     *                SchemeFactory <br/>
-     *                Validator <br/>
-     *                XMLReader <br/>
-     *                TransformerFactory <br/>
+     * @param builder 支持以下类型的Builder(Factory)： <br>
+     *                SAXReader <br>
+     *                DocumentBuilderFactory <br>
+     *                SAXParserFactory <br>
+     *                XMLInputFactory <br>
+     *                SAXBuilder <br>
+     *                SchemeFactory <br>
+     *                Validator <br>
+     *                XMLReader <br>
+     *                TransformerFactory <br>
      *                对于不受支持的builder类型，执行withXxeProtection()会抛出RuntimeException()异常，提示不受支持
      * @return 加了XXE保护的Factory或builder
      * @param <T> builder类型
@@ -69,9 +69,9 @@ public class SecurityUtil {
     }
 
     /**
-     * 给要生成的HttpClient增加SSRF检查功能，生成的client请求前都会进行SSRF检查。<br />
-     * 适用于 http-clients 4.x/5.x (包含HttpAsyncClient)版本、OkHttp2、OkHttp3 <br />
-     * example: <br />
+     * 给要生成的HttpClient增加SSRF检查功能，生成的client请求前都会进行SSRF检查。<br>
+     * 适用于 http-clients 4.x/5.x (包含HttpAsyncClient)版本、OkHttp2、OkHttp3 <br>
+     * example: <br>
      * <pre>
      * // http client
      * HttpClientBuilder builder = SecurityUtil.withSSRFChecking(HttpClients.custom());
@@ -88,8 +88,10 @@ public class SecurityUtil {
      * OkHttpClient.Builder builder = SecurityUtil.withSSRFChecking(new OkHttpClient.Builder());
      * OkHttpClient client = builder.build();
      * </pre>
-     * 加了withSSRFChecking之后生成的client<b>不能请求内网</b>，如果有请求内网URL的需求需要用其他client访问</b>
+     * 加了withSSRFChecking之后生成的client<b>不能请求内网</b>，如果有请求内网URL的需求需要用其他client访问
+     * @param <T> client或clientBuilder的类型
      * @param clientOrBuilder 要加入SSRF检查功能的 client 或 clientBuilder
+     * @return 附带SSRF检查功能的client或clientBuilder
      */
     public static <T> T withSSRFChecking(T clientOrBuilder) {
         return ssrfAdaptor.withSSRFChecking(clientOrBuilder);

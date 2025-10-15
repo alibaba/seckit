@@ -8,8 +8,7 @@ import java.util.Map;
 
 /**
  * @author renyi.cry
- * @date 17/12/26 下午9:26
- */
+  */
 public class ExpiringSet<E> {
 
     private final transient Map<E, Object> map;
@@ -26,6 +25,7 @@ public class ExpiringSet<E> {
 
     /**
      * Constructs a new, empty set
+     * @param map packaged map
      */
     public ExpiringSet(ExpiringMap<E, Object> map) {
         this.map = map;
@@ -116,9 +116,9 @@ public class ExpiringSet<E> {
     /**
      * Create a {@link ExpiringSet} object.
      *
-     * @param map
-     * @param <E>
-     * @return
+     * @param map packaged map
+     * @param <E> element type
+     * @return {@link ExpiringSet} object
      */
     public static <E> ExpiringSet<E> create(ExpiringMap<E, Object> map) {
         return new ExpiringSet<E>(map);

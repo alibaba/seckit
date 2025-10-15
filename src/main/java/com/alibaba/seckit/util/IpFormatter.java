@@ -65,6 +65,8 @@ public class IpFormatter {
 
     /**
      * Java环境下当为点分形式IP时, 当其字符串小于等于15位, 将直接视为点分十进制来处理, 及时可能为其他情况如: 点分八进制、点分十六进制
+     * @param ip 待格式化的ip
+     * @return 格式化后的ip
      */
     public static String formatJavaIp(String ip) {
         if (ip.length() > 15) {

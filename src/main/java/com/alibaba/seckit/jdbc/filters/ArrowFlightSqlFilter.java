@@ -9,8 +9,7 @@ import java.util.Set;
 
 /**
  * @author mz.zmy
- * @date 2023/9/21 10:56
- */
+  */
 public class ArrowFlightSqlFilter extends DefaultFilter {
 
     @Getter

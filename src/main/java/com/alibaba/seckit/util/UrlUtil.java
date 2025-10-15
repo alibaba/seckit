@@ -12,16 +12,15 @@ public class UrlUtil {
 	/**
 	 * Parse url
 	 *
-	 * @param url
-	 * @param isHost
-	 * @return
+	 * @param url to be parsed
+	 * @param isHost param url is host or not
+	 * @return formatted host
 	 */
 	public static String parseUrl(String url, boolean isHost) {
 		if (isHost) {
 			return url.toLowerCase();
 		}
 
-		// get host from url
 		try {
 			return UrlUtil.getHost(url);
 		} catch (URISyntaxException e) {
@@ -33,8 +32,8 @@ public class UrlUtil {
 	/**
 	 * Check if the host is legal.
 	 *
-	 * @param host
-	 * @return
+	 * @param host to be checked
+	 * @return true if the host is legal, false otherwise
 	 */
 	public static boolean validateHost(String host) {
 		char[] chs = host.toCharArray();
@@ -58,10 +57,10 @@ public class UrlUtil {
 	/**
 	 * Get host from url.
 	 *
-	 * @param url
-	 * @return
-	 * @throws URISyntaxException
-	 */
+	 * @param url to be parsed
+	 * @return host
+	 * @throws URISyntaxException if url is invalid
+     */
 	public static String getHost(String url) throws URISyntaxException {
 		// 删除协议与参数，有些特殊的参数会导致URI解析出错
 		// eg. http://www.baidu.com/?abc=123&aaa={name:1}
@@ -81,8 +80,8 @@ public class UrlUtil {
 	/**
 	 * delete path and queryString from url.
 	 *
-	 * @param url
-	 * @return
+	 * @param url to be parsed
+	 * @return host
 	 */
     public static String getHostFormURL(String url) {
 

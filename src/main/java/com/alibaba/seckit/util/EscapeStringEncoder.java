@@ -5,8 +5,7 @@ import com.google.common.collect.HashBiMap;
 
 /**
  * @author mingyi
- * @date 2025/9/18
- */
+  */
 public class EscapeStringEncoder {
     private char escapeChar = '%';
     private char[] encodeChars = new char[]{'%', '+', ' ', '&', '?', '=', ';', ':', '*', '[', ']', '{', '}', '(', ')', '|', '\\', '/', '\'', '"', '<', '>', '^', '`', '~', ','};

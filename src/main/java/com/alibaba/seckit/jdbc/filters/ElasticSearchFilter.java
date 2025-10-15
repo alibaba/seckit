@@ -12,8 +12,7 @@ import java.util.Set;
 
 /**
  * @author mingyi
- * @date 2024/2/26
- */
+  */
 public class ElasticSearchFilter extends DefaultFilter {
     @Getter
     @Setter

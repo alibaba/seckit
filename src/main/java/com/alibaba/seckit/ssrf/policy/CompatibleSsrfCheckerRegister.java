@@ -15,8 +15,7 @@ import com.alibaba.seckit.util.ExpiringSet;
  * the application to prevent the SSRF attack by dns rebinding.
  *
  * @author renyi.cry
- * @date 17/6/26 下午8:34
- */
+  */
 public class CompatibleSsrfCheckerRegister {
 
     public static class SSRFNetHookCheckingFlagHolder {
@@ -43,6 +42,7 @@ public class CompatibleSsrfCheckerRegister {
 
     /**
      * Start hooking checking.
+     * @param host to be checked
      */
     public static void startCachedNetHooking(String host) {
         initiate();

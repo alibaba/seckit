@@ -65,7 +65,6 @@ public interface SSRFChecker {
      *     }
      * </pre></blockquote>
      *
-     * @since 1.2.15
      */
     void startNetHookWithThreadLocal();
 
@@ -87,8 +86,7 @@ public interface SSRFChecker {
      *         ssrfChecker.stopNetHookWithThreadLocal();
      *     }
      * </pre></blockquote>
-     *
-     * @since 1.2.15
+     * @param url 待访问的url
      */
     void startNetHookWithThreadLocal(String url);
 
@@ -96,7 +94,6 @@ public interface SSRFChecker {
      * 停止Hook检查，与{@link #startNetHookWithThreadLocal()} 或
      * {@link #startNetHookWithExpirationCache(String)}方法联合使用
      *
-     * @since 1.2.15
      */
     void stopNetHookWithThreadLocal();
 
@@ -113,7 +110,6 @@ public interface SSRFChecker {
      * </pre></blockquote>
      *
      * @param url 待访问的url
-     * @since 1.2.15
      */
     void startNetHookWithExpirationCache(String url);
 
@@ -121,6 +117,7 @@ public interface SSRFChecker {
      * 在不链接的情况下，判断url是否可以安全地被访问
      *
      * @param url         待访问的url
+     * @return true 表示可以安全地被访问
      */
     boolean checkUrlWithoutConnection(String url);
 }

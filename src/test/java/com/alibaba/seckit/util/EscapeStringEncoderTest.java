@@ -5,8 +5,7 @@ import static org.junit.Assert.*;
 
 /**
  * @author mingyi
- * @date 2025/9/18
- */
+  */
 public class EscapeStringEncoderTest {
 
     @Test

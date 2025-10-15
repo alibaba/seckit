@@ -16,8 +16,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * A {@link NetHooks.Provider} to delegate the origin one.
  *
  * @author renyi.cry
- * @date 17/2/13
- * @since 1.0.3
  */
 public class SecurityNetHooksProvider extends NetHooks.Provider {
 

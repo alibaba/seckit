@@ -7,8 +7,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author renyi.cry
- * @date 2020/6/10 5:35 下午
- */
+  */
 public class LRUCache<K, V> extends LinkedHashMap<K, V> {
 
     private final Lock lock = new ReentrantLock();

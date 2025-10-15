@@ -10,8 +10,7 @@ import java.util.regex.Pattern;
 
 /**
  * @author mz.zmy
- * @date 2024/1/23 19:52
- */
+  */
 public class PostgresParser extends DefaultUrlParser {
     private static final Pattern DATABASE_PATTERN = Pattern.compile("^[a-zA-Z0-9_\\-\\.\\p{script=Han}$@]+$");
 

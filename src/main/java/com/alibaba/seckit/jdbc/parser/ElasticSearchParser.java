@@ -8,8 +8,7 @@ import java.util.regex.Pattern;
 
 /**
  * @author mingyi
- * @date 2024/2/27
- */
+  */
 public class ElasticSearchParser extends DefaultUrlParser {
 
     public ElasticSearchParser(String url) throws JdbcURLException {

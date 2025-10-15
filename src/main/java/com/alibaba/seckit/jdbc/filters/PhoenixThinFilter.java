@@ -12,8 +12,7 @@ import java.util.Set;
 
 /**
  * @author mingyi
- * @date 2024/4/11
- */
+  */
 public class PhoenixThinFilter extends LindormFilter {
     @Getter
     @Setter

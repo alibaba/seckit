@@ -12,8 +12,7 @@ import java.net.InetAddress;
  * handler, and that is why this class extends the SecurityException.
  *
  * @author renyi.cry
- * @date 2019/12/12 4:43 下午
- */
+  */
 @Getter
 public class SSRFUnsafeConnectionException extends SecurityException {
 

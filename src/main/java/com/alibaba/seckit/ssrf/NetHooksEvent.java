@@ -11,8 +11,7 @@ import java.net.InetAddress;
  * registered to {@link SecurityNetHooksProvider}
  *
  * @author renyi.cry
- * @date 17/2/14
- */
+  */
 @Getter
 @ToString
 @AllArgsConstructor

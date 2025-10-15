@@ -8,8 +8,7 @@ import java.util.List;
 
 /**
  * @author mingyi
- * @date 2024/4/11
- */
+  */
 public class PhoenixThinUrlParser extends LindormLikeUrlParser {
 
     public PhoenixThinUrlParser(String url) throws JdbcURLException {

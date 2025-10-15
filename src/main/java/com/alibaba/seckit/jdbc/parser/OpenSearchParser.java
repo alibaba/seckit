@@ -8,8 +8,7 @@ import java.util.regex.Pattern;
 
 /**
  * @author mz.zmy
- * @date 2025/7/9
- */
+  */
 public class OpenSearchParser extends DefaultUrlParser {
 
     public OpenSearchParser(String url) throws JdbcURLException {

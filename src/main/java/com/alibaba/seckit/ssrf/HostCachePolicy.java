@@ -10,7 +10,6 @@ import java.util.concurrent.TimeUnit;
  * {@link HostCachePolicy}
  *
  * @author renyi.cry
- * @date 17/12/24 下午4:08
  */
 public class HostCachePolicy {
 
@@ -23,11 +22,6 @@ public class HostCachePolicy {
 
     public static final ExpirationPolicy DEFAULT_EXPIRATION_POLICY = ExpirationPolicy.ACCESSED;
 
-    /**
-     * Get a configured {@link ExpiringSet}.
-     *
-     * @return
-     */
     public static ExpiringSet<String> expiringSet() {
 
         ExpiringMap<String, Object> mapBuilder = ExpiringMap.builder()

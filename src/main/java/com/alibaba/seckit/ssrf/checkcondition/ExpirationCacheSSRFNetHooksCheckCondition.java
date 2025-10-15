@@ -10,8 +10,7 @@ import java.util.List;
 
 /**
  * @author renyi.cry
- * @date 17/12/26 下午9:43
- */
+  */
 public class ExpirationCacheSSRFNetHooksCheckCondition implements SSRFNetHooksCheckCondition {
 
     @Override

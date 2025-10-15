@@ -52,7 +52,7 @@ public class SSRFCheckerImpl implements SSRFChecker {
      * to achieve performance improvements, ENABLE_NET_HOOKS will be true in the
      * meantime, whether {@link NetHooksEventListener} could be registered or not.
      *
-     * @param url
+     * @param url to be checked
      */
     @Override
     public void startNetHookWithThreadLocal(String url) {
@@ -85,8 +85,8 @@ public class SSRFCheckerImpl implements SSRFChecker {
     /**
      * Check if the input url is vulnerable to ssrf attack without connection.
      *
-     * @param url
-     * @return
+     * @param url to be checked
+     * @return true if the url is safe, false otherwise
      */
     public boolean checkUrlWithoutConnection(String url) {
         try {
@@ -103,10 +103,10 @@ public class SSRFCheckerImpl implements SSRFChecker {
     // ***********************************************************************************
 
     /**
-     * check if the {@InetAddress} is an allowed address.
+     * check if the inetAddress is an allowed address.
      *
-     * @param inetAddress
-     * @return
+     * @param inetAddress to be checked
+     * @return true if the inetAddress is an allowed address, false otherwise
      */
     static boolean isAllowedAddress(InetAddress inetAddress) {
 
@@ -154,9 +154,9 @@ public class SSRFCheckerImpl implements SSRFChecker {
     /**
      * Check url without connection (visible for testing)
      *
-     * @param url
-     * @param isHost
-     * @return
+     * @param url to be checked
+     * @param isHost param url is host or not
+     * @return true if the url is safe, false otherwise
      */
     boolean checkUrlWithoutConnection(String url, boolean isHost) {
         return checkUrlWithoutConnection0(url, isHost).isSafe();
@@ -191,7 +191,7 @@ public class SSRFCheckerImpl implements SSRFChecker {
     /**
      * Check if it's protocol is allowed
      *
-     * @param url
+     * @param url to be checked
      * @return protocol is allowed or not
      */
     boolean checkprotocol(String url) {
@@ -208,8 +208,8 @@ public class SSRFCheckerImpl implements SSRFChecker {
     /**
      * Check if the address contains a banned ip.
      *
-     * @param host
-     * @return
+     * @param host to be checked
+     * @return {@code SSRFResult.ofNotSafe()} if the address contains a banned ip or invalid, {@code SSRFResult.ofSafe()}
      */
     private static SSRFResult checkSSRFBannedAddress(String host) {
         if (host == null) {
