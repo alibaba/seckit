@@ -1,12 +1,10 @@
 # Changelog
 
-## Unreleased
+## 0.1.0
 
 ### Added
 
 - Add `SecurityUtil.trimCmd` for command-argument character trimming, preserving ASCII letters/digits, `_`, `-`, `,`, `.`, and Chinese characters in U+4E00–U+9FBB.
-
-## 0.1.0
 
 ### Changed
 
