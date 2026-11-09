@@ -22,7 +22,6 @@ public class SybaseFilter extends DefaultFilter {
     @Getter
     @Setter
     private Set<String> acceptedPropertyKeys = new HashSet<>(Arrays.asList(
-            // "ALTERNATE_SERVER_NAME",
             "APPLICATIONNAME",
             "BE_AS_JDBC_COMPLIANT_AS_POSSIBLE",
             "CACHE_COLUMN_METADATA",

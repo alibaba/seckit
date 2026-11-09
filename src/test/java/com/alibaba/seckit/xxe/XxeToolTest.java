@@ -1,11 +1,18 @@
 package com.alibaba.seckit.xxe;
 
 
+import com.alibaba.seckit.util.HttpServerForTest;
 import org.apache.commons.lang3.SystemUtils;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,12 +25,19 @@ public class XxeToolTest {
 
 
     private static final Map<String, String> xmlContentMap = new HashMap<>();
+    private static final HttpServerForTest server = new HttpServerForTest(0);
 
     @BeforeClass
-    public static void before() {
+    public static void before() throws IOException {
+        server.start();
         xmlContentMap.put("file.xml", "root:");
         xmlContentMap.put("simple.xml", "Doe");
         xmlContentMap.put("ssrf.xml", "Answer");
+    }
+
+    @AfterClass
+    public static void after() {
+        server.close();
     }
 
     @Test
@@ -105,10 +119,23 @@ public class XxeToolTest {
 
 
     public String getXmlParseResult(Class<?> parserClass, String fileName, boolean xInclude, boolean secure) throws Exception {
-        return ((XmlParsers.XmlParser) parserClass.newInstance()).parse(
-                this.getClass().getResourceAsStream("/xxe/" + fileName),
-                xInclude, secure
-        );
+        try (InputStream resource = getClass().getResourceAsStream("/xxe/" + fileName)) {
+            XmlParsers.XmlParser parser = (XmlParsers.XmlParser) parserClass.getDeclaredConstructor().newInstance();
+            if (!"ssrf.xml".equals(fileName)) {
+                return parser.parse(resource, xInclude, secure);
+            }
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            byte[] buffer = new byte[2048];
+            int count;
+            while ((count = resource.read(buffer)) != -1) {
+                bytes.write(buffer, 0, count);
+            }
+            String xml = new String(bytes.toByteArray(), StandardCharsets.UTF_8)
+                    .replace("__XXE_ENTITY_URL__", server.localUrl("/Answer"));
+            try (InputStream input = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8))) {
+                return parser.parse(input, xInclude, secure);
+            }
+        }
     }
 
     public void assertResultOrException(Class<?> parserClass, String fileName, String content, boolean xInclude, boolean secure) {

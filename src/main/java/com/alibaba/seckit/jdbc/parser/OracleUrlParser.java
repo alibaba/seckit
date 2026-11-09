@@ -49,7 +49,7 @@ public class OracleUrlParser extends DefaultUrlParser {
         }
 
         if (!URL_PATTERN.matcher(initialUrl).matches()) {
-            if (initialUrl.startsWith("(")) {
+            if (initialUrl.trim().startsWith("(")) {
                 this.parseTNSURLFormat(initialUrl);
             } else {
                 int paramIndex = initialUrl.indexOf("?");
@@ -100,32 +100,16 @@ public class OracleUrlParser extends DefaultUrlParser {
     }
 
     private void parseTNSURLFormat(String url) throws JdbcURLException {
-        url = url.startsWith("alias") ? url : "alias=" + url;
-        url = url.charAt(0) == '(' ? url : "(" + url + ")";
-        try {
-            nvPair = (new NVFactory()).createNVPair(url);
-        }
-        catch (JdbcURLException ex) {
-            // throw new JdbcURLUnsafeException("invalid url format: " + url);
-            throw (ex);
-        }
-        if (nvPair == null || nvPair.getListSize() != 1) {
-            throw new JdbcURLUnsafeException("invalid url format: " + url);
-        }
+        nvPair = new NVFactory().createNVPair(url);
+        // A rejected root leaves an empty connection string, not the literal "null".
+        connectionString = "";
     }
 
     @Override
     public String toString() {
         String url = this.scheme + "@";
         if (nvPair != null) {
-            if (nvPair.getListSize() < 1) {
-                return url;
-            }
-            NVPair subPair = nvPair.getListElement(0);
-            if (subPair == null) {
-                return url;
-            }
-            url += subPair.toString();
+            url += nvPair.toString();
         } else {
             url += this.connectionString + (this.properties.isEmpty() ? "" : "?" + this.propertiesToString());
         }

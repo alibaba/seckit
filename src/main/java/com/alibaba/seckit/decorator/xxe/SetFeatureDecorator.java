@@ -1,8 +1,11 @@
 package com.alibaba.seckit.decorator.xxe;
 
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.lang.reflect.Method;
 
+@Slf4j
 public class SetFeatureDecorator extends AbstractXxeDecorator {
     private static final Class<?> dbfClass = classForNameQuietly("javax.xml.parsers.DocumentBuilderFactory");
     private static final Class<?> saxReaderClass = classForNameQuietly("org.dom4j.io.SAXReader");
@@ -18,6 +21,7 @@ public class SetFeatureDecorator extends AbstractXxeDecorator {
         return getInterface(CLASSES, clientOrBuilder) != null;
     }
 
+    @Override
     public <T> T decorate(T builder) {
         Class<?> builderInterFace = getInterface(CLASSES, builder);
         if (builderInterFace == null) {
@@ -32,7 +36,9 @@ public class SetFeatureDecorator extends AbstractXxeDecorator {
 
             try {
                 m.invoke(builder, "http://apache.org/xml/features/xinclude", false);
-            } catch (Exception ignored){}
+            } catch (Exception e) {
+                log.debug("XML parser {} does not support disabling XInclude", builder.getClass().getName(), e);
+            }
 
             // special case
             if ((xrClass != null && xrClass.isInstance(builder))

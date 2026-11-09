@@ -8,7 +8,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.Arrays;
 import java.util.Map;
 
 
@@ -25,67 +24,54 @@ public class SnowFlakeParser extends DefaultUrlParser {
     }
 
 
-    public void parse(String url) throws JdbcURLException {
-        this.initialUrl = url;
-
-        String afterPrefix = url.substring(URL_PREFIX.length());
-        String host = null;
-        int port = -1;
-        if (!afterPrefix.startsWith("http://") && !afterPrefix.startsWith("https://")) {
-            afterPrefix = url.substring(url.indexOf("snowflake:"));
+    @Override
+    public void parse() throws JdbcURLException {
+        if (initialUrl == null || !initialUrl.regionMatches(true, 0, URL_PREFIX, 0, URL_PREFIX.length())) {
+            throw new JdbcURLUnsafeException("Connect strings must start with " + URL_PREFIX);
         }
-        URI uri = null;
+
+        String afterPrefix = initialUrl.substring(URL_PREFIX.length());
+        if (!afterPrefix.startsWith("http://") && !afterPrefix.startsWith("https://")) {
+            afterPrefix = "snowflake://" + afterPrefix;
+        }
+        URI uri;
         try {
             uri = new URI(afterPrefix);
         } catch (URISyntaxException e) {
             throw new JdbcURLUnsafeException("URI parsing error " + afterPrefix);
         }
         String scheme = uri.getScheme();
-        String authority = uri.getRawAuthority();
-        String[] hostAndPort = authority.split(":");
-        if (hostAndPort.length == 2) {
-            host = hostAndPort[0];
-            try {
-                port = Integer.parseInt(hostAndPort[1]);
-            } catch (NumberFormatException e) {
-                throw new JdbcURLUnsafeException("invalid host: " + authority);
-            }
-        } else if (hostAndPort.length == 1) {
-            host = hostAndPort[0];
+        if (!"snowflake".equals(scheme) && !"http".equals(scheme) && !"https".equals(scheme)) {
+            throw new JdbcURLUnsafeException("Connect strings must have a valid scheme: 'snowflake' or 'http' or 'https'");
         }
-        if (stringIsNullOrEmpty(host) || !getHostPattern().matcher(host).matches()) {
+        String authority = uri.getRawAuthority();
+        if (stringIsNullOrEmpty(authority)) {
             throw new JdbcURLUnsafeException("invalid host: " + authority);
         }
+        this.parseHost(authority);
 
+        String path = uri.getPath();
+        if (!stringIsNullOrEmpty(path) && !"/".equals(path)) {
+            throw new JdbcURLUnsafeException("Connect strings must have no path: expecting empty or null or '/'");
+        }
         String queryData = uri.getRawQuery();
-        if (!scheme.equals("snowflake") && !scheme.equals("http") && !scheme.equals("https")) {//解析协议
-            throw new JdbcURLUnsafeException("Connect strings must have a valid scheme: 'snowflake' or 'http' or 'https'");
-        } else {
-            String path = uri.getPath();
-            if (!stringIsNullOrEmpty(path) && !"/".equals(path)) {
-                throw new JdbcURLUnsafeException("Connect strings must have no path: expecting empty or null or '/'");
-            }
-            if (!stringIsNullOrEmpty(queryData)) {
-                String[] params = queryData.split("&");
-                for (String p : params) {
-                    String[] keyVals = p.split("=");
-                    if (keyVals.length != 2) {
-                        continue; // ignore invalid pair of parameters.
-                    }
-                    try {
-                        String k = URLDecoder.decode(keyVals[0], "UTF-8");
-                        String v = URLDecoder.decode(keyVals[1], "UTF-8");
-                        properties.put(k, v);
-                    } catch (UnsupportedEncodingException ex0) {
-                        throw new JdbcURLUnsafeException("Failed to decode a parameter "+ Arrays.toString(new Object[]{p}) +". Ignored.");
-                    }
+        if (!stringIsNullOrEmpty(queryData)) {
+            String[] params = queryData.split("&");
+            for (String p : params) {
+                int separator = p.indexOf('=');
+                if (separator < 0) {
+                    continue; // ignore invalid pair of parameters.
+                }
+                try {
+                    String k = URLDecoder.decode(p.substring(0, separator), "UTF-8");
+                    String v = URLDecoder.decode(p.substring(separator + 1), "UTF-8");
+                    properties.put(k, v);
+                } catch (UnsupportedEncodingException | IllegalArgumentException e) {
+                    throw new JdbcURLUnsafeException("Failed to decode a parameter " + p);
                 }
             }
-
-            this.scheme = scheme;
-            this.host = host;
-            this.port = port;
         }
+        this.scheme = scheme;
     }
 
     @Override
@@ -113,6 +99,7 @@ public class SnowFlakeParser extends DefaultUrlParser {
         }
     }
 
+    @Override
     public String toString() {
         return URL_PREFIX +
                 (this.scheme.equals("snowflake") ? "" : (this.scheme + "://")) +

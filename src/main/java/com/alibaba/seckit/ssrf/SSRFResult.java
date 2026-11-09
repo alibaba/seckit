@@ -10,14 +10,14 @@ public class SSRFResult {
     public static final String NO_DNS_IP = "-1";
 
     /**
-     * 是否安全
+     * Whether the result is safe.
      */
     private boolean safe;
 
     /**
      * Dns IP
      *
-     * 如果解析了DNS, 但无DNS记录, 则返回NO_DNS_IP
+     * {@link #NO_DNS_IP} if DNS was queried but no record was found.
      * @see #NO_DNS_IP
      */
     private String dnsIp;

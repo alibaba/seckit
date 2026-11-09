@@ -1,5 +1,7 @@
 package com.alibaba.seckit.decorator;
 
+import com.alibaba.seckit.util.ClassUtil;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -10,11 +12,7 @@ public abstract class AbstractDecorator implements Decorator {
     }
 
     protected static Class<?> classForNameQuietly(String name) {
-        try {
-            return Class.forName(name);
-        } catch (Exception ignored) {
-        }
-        return null;
+        return ClassUtil.classForNameQuietly(name);
     }
 
 }

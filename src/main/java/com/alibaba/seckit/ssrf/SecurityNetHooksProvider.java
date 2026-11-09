@@ -1,6 +1,7 @@
 package com.alibaba.seckit.ssrf;
 
 import com.alibaba.seckit.util.ReflectionUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.JavaVersion;
 import org.apache.commons.lang3.SystemUtils;
 import sun.net.NetHooks;
@@ -17,6 +18,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * @author renyi.cry
  */
+@Slf4j
 public class SecurityNetHooksProvider extends NetHooks.Provider {
 
     private NetHooks.Provider delegate;
@@ -33,7 +35,7 @@ public class SecurityNetHooksProvider extends NetHooks.Provider {
         try {
             setProvider(NetHooks.class.getDeclaredField("provider"));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn("Unable to install SSRF net hooks", e);
         }
     }
 
@@ -43,13 +45,10 @@ public class SecurityNetHooksProvider extends NetHooks.Provider {
 
     static void setProvider(Field field) throws Exception {
 
-        if (field != null){
+        if (field != null) {
             field.setAccessible(true);
-            // 这里有个很奇怪的坑...
-            // 虽然setFinalField()里会处理掉field的final字段，但是因为新值需要把field作为delegate，
-            // field.get()会先触发overrideFieldAccessor的赋值，导致检查isReadonly=true，field的赋值会失败报错，所以这里需要先执行一次
-            // 但是在jdk21里面FieldAccessor逻辑不一样，会用memberName自己再读一遍，所以先执行之后反而会导致overrideFieldAccessor报错
-            if(SystemUtils.isJavaVersionAtMost(JavaVersion.JAVA_20)) {
+            // Before JDK 21, remove final before reading so the cached field accessor remains writable.
+            if (SystemUtils.isJavaVersionAtMost(JavaVersion.JAVA_20)) {
                 ReflectionUtil.removeFinalModifierFromField(field);
             }
             ReflectionUtil.setFinalField(field, null, new SecurityNetHooksProvider((NetHooks.Provider)field.get(NetHooks.class)));

@@ -16,7 +16,7 @@ public class MongoDBFilter extends DefaultFilter {
     @Setter
     private Set<String> acceptedSchemes = new HashSet<>(Arrays.asList(
             "jdbc:mongodb:",
-            // mongodb+srv 会去取 dns 的 TXT 记录来作为参数，不过只支持 authsource 、 replicaset 两个参数
+            // mongodb+srv reads DNS TXT records for authSource and replicaSet parameters only.
             "jdbc:mongodb+srv:",
             "mongodb:",
             "mongodb+srv:"

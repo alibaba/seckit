@@ -62,7 +62,7 @@ public class UrlUtil {
 	 * @throws URISyntaxException if url is invalid
      */
 	public static String getHost(String url) throws URISyntaxException {
-		// 删除协议与参数，有些特殊的参数会导致URI解析出错
+		// Strip URL components that may contain characters rejected by URI parsing.
 		// eg. http://www.baidu.com/?abc=123&aaa={name:1}
 		url = getHostFormURL(url);
 		if (url == null) {

@@ -17,7 +17,6 @@ public class OdpsFilter extends DefaultFilter {
     @Getter
     @Setter
     private Set<String> acceptedPropertyKeys = new HashSet<>(Arrays.asList(
-            // "odps_config",
             "accessId",
             "accessKey",
             "project",
@@ -66,17 +65,5 @@ public class OdpsFilter extends DefaultFilter {
     private Set<String> propertyKeyWhiteList = new HashSet<>(Arrays.asList(
             "accessId", "accessKey", "tunnelEndpoint", "stsToken", "logview"
     ));
-
-    // private static Map<String, Pattern> propertyPatterns = new HashMap<>();
-    // static {
-    //     Pattern urlPattern = Pattern.compile("^[a-zA-Z0-9_\\-\\.:\\[\\]/]+$");
-    //     propertyPatterns.put("tunnelEndpoint", urlPattern);
-    //
-    // }
-    //
-    // @Override
-    // protected Map<String, Pattern> getPropertyPatterns() {
-    //     return propertyPatterns;
-    // }
 
 }

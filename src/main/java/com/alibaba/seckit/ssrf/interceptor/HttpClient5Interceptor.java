@@ -21,8 +21,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 /**
- * HttpComponents 5 里面 request interceptor 在端口连接之后的，会被用来探测端口是否存活，
- * 所以必须用 execChain，位置在connect之前，保证每次跳转 Connect 前都能执行到
+ * Check each redirect before connecting to prevent port probing; request interceptors run after connecting.
  */
 @Slf4j
 public class HttpClient5Interceptor implements ExecChainHandler, AsyncExecChainHandler {

@@ -68,11 +68,12 @@ public class OracleFilter extends DefaultFilter {
         if (pair == null) {
             return result;
         }
-        if (acceptedPairNames.contains(pair.getName())) {
+        if (!isAcceptedPair(pair)) {
             oracleParser.setNvPair(null);
             result.propertyDelete(pair.getName(), "");
+        } else {
+            filterNVPairRecursive(pair, result);
         }
-        filterNVPairRecursive(pair, result);
         if (!result.isSafe()) {
             log.info("invalid property are removed by jdbc url filter, original url: {}, after filter: {}",
                     parser.getInitialUrl(), parser.toString());
@@ -81,39 +82,24 @@ public class OracleFilter extends DefaultFilter {
     }
 
     public void filterNVPairRecursive(NVPair pair, FilterResult result) {
-//        boolean hasRemovedNvPair = false;
-        int size = pair.getListSize();
-        List<Integer> removeIndex = new ArrayList<>();
-
-        for (int i = 0; i < size; i++) {
-            NVPair subPair = pair.getListElement(i);
-            if (subPair == null) {
-                continue;
-            }
-            filterNVPairRecursive(subPair, result);
-
-            if (!acceptedPairNames.contains(subPair.getName().toUpperCase())) {
-                removeIndex.add(i);
-            }
-            // only support tcp/tcps protocol
-            if (subPair.getName().equalsIgnoreCase("PROTOCOL")) {
-                if (subPair.getRHSType() != NVPair.RHS_ATOM) {
-                    removeIndex.add(i);
-                }
-                if (!subPair.getAtom().equalsIgnoreCase("TCP") && !subPair.getAtom().equalsIgnoreCase("TCPS")) {
-                    removeIndex.add(i);
-                }
+        for (int index = pair.getListSize() - 1; index >= 0; index--) {
+            NVPair child = pair.getListElement(index);
+            if (!isAcceptedPair(child)) {
+                result.propertyDelete(child.getName(), "");
+                pair.removeListElement(index);
+            } else {
+                filterNVPairRecursive(child, result);
             }
         }
+    }
 
-        Collections.sort(removeIndex);
-        for (int i = 0; i < removeIndex.size(); i++) {
-            removeIndex.set(i, removeIndex.get(i) - i);
+    private boolean isAcceptedPair(NVPair pair) {
+        if (!acceptedPairNames.contains(pair.getName().toUpperCase(Locale.ROOT))) {
+            return false;
         }
-
-        for (Integer i : removeIndex) {
-            result.propertyDelete(pair.getListElement(i).getName(), "");
-            pair.removeListElement(i);
-        }
+        // List-valued and empty protocols are not TCP/TCPS.
+        return !pair.getName().equalsIgnoreCase("PROTOCOL")
+                || (pair.getRHSType() == NVPair.RHS_ATOM
+                && ("TCP".equalsIgnoreCase(pair.getAtom()) || "TCPS".equalsIgnoreCase(pair.getAtom())));
     }
 }

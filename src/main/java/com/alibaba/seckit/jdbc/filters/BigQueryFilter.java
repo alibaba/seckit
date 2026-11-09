@@ -55,7 +55,6 @@ public class BigQueryFilter extends DefaultFilter {
             "useQueryCache"
     ));
 
-    @Getter
     private static final Map<String, Pattern> propertyPatterns = new HashMap<>();
 
     static {

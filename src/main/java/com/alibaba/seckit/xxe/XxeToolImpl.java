@@ -13,13 +13,14 @@ public class XxeToolImpl implements XxeTool {
 
     private volatile List<Decorator> decorators = null;
 
+    @Override
     public <T> T withXxeProtection(T builder) {
         if (decorators == null) {
             synchronized (this) {
                 if (decorators == null) {
                     // load all decorators manually
                     decorators = new ArrayList<>(Arrays.asList(
-                            (Decorator)new SetFeatureDecorator(),
+                            new SetFeatureDecorator(),
                             new XMLInputFactoryDecorator(),
                             new SetPropertyDecorator()
                     ));

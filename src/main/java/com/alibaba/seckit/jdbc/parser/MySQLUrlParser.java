@@ -10,7 +10,7 @@ public class MySQLUrlParser extends DefaultUrlParser {
         super(url);
     }
 
-    // mysql 的特殊配置，允许数据库名中存在空格、=、#符号
+    // MySQL permits spaces, '=' and '#' in database names.
     private static final Pattern DATABASE_PATTERN = Pattern.compile("^[a-zA-Z0-9_\\-.\\p{script=Han}$ =#]+$");
 
     @Override

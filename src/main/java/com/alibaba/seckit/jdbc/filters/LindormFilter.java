@@ -43,7 +43,6 @@ public class LindormFilter extends DefaultFilter {
     @Getter
     @Setter
     private Set<String> acceptedPropertyKeys = new HashSet<>(Arrays.asList(
-            // "factory",
             "schema",
             "timeZone",
             "url",

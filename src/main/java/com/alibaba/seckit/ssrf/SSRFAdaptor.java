@@ -1,6 +1,6 @@
 package com.alibaba.seckit.ssrf;
 
-import com.alibaba.seckit.Decorator;
+import com.alibaba.seckit.decorator.Decorator;
 import com.alibaba.seckit.ssrf.decorator.*;
 import com.google.auto.service.AutoService;
 

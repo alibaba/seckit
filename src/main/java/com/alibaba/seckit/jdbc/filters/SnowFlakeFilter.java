@@ -22,7 +22,7 @@ public class SnowFlakeFilter extends DefaultFilter {
             "jdbc:snowflake:"
     ));
 
-    //白名单参数
+    // Whitelisted parameters.
     @Getter
     @Setter
     private Set<String> acceptedPropertyKeys = new HashSet<>(Arrays.asList(

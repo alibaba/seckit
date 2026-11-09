@@ -9,20 +9,13 @@ import com.alibaba.seckit.util.UrlUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.*;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * 一个单例的SSRF检查器。
- * <p>
- * <p>
- * 本类的实现与接口方案有所不同，具体在于:
- * <ol>
- * <li>十进制和八进制都为数字或"."的格式，可以通过是否全是数字或"."的格式快速排除
- * <li><code>uri.getHost()</code>将阻止0x7f.1等非标准格式输入，故不再做独立的过滤判断
- * <li><code>InetAddress</code>默认解析ipv4和ipv6地址，只要判断返回类型即可，无需判断路径是否包含":"
- * </ol>
- * <p>
- * <p><b>注意:</b> 由于检查每次将尝试解析地址，如果用户输入一个不存在地址时，本类
- * 中的函数将产生严重阻塞，可能存在被Dos攻击的风险!
+ * SSRF checker; DNS lookups may block when a supplied hostname cannot be resolved.
  *
  * @author renyi.cry
  */
@@ -30,10 +23,6 @@ import java.net.*;
 public class SSRFCheckerImpl implements SSRFChecker {
     private volatile String[] allowedProtocols = ALLOWED_PROTOCOLS;
 
-
-    // ***********************************************************************************
-    // public method
-    // ***********************************************************************************
 
     /**
      * Start hooking checking.  {@link NetHooksEventListener} will be registered
@@ -97,10 +86,6 @@ public class SSRFCheckerImpl implements SSRFChecker {
         }
 
     }
-
-    // ***********************************************************************************
-    // private method
-    // ***********************************************************************************
 
     /**
      * check if the inetAddress is an allowed address.
@@ -248,17 +233,44 @@ public class SSRFCheckerImpl implements SSRFChecker {
         stopNetHookWithThreadLocal();
     }
 
-    /**
-     * 检查一个 InetAddress 是否是私有地址、回环地址或本地链接地址。
-     * @param address 要检查的地址
-     * @return 如果是私有地址则返回 true
-     */
     private static boolean isPrivate(InetAddress address) {
-        // isLoopbackAddress() 检查是否为 127.0.0.1 或 ::1
-        // isSiteLocalAddress() 检查是否为私有地址段，如 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16
-        // isAnyLocalAddress() 检查是否为 0.0.0.0 或 ::0
-        // isLinkLocalAddress() 检查是否为 169.254.0.0/16
-        return address.isLoopbackAddress() || address.isSiteLocalAddress() || address.isAnyLocalAddress() || address.isLinkLocalAddress();
+        if (address.isLoopbackAddress() || address.isSiteLocalAddress()
+                || address.isAnyLocalAddress() || address.isLinkLocalAddress()
+                || LocalAddressesHolder.ADDRESSES == null
+                || LocalAddressesHolder.ADDRESSES.contains(address)) {
+            return true;
+        }
+        // JDK local-address predicates omit IPv6 ULA, IPv4 CGNAT, and benchmarking ranges.
+        byte[] bytes = address.getAddress();
+        if (address instanceof Inet6Address) {
+            return (bytes[0] & 0xfe) == 0xfc;
+        }
+        int first = bytes[0] & 0xff;
+        int second = bytes[1] & 0xff;
+        return (first == 100 && (second & 0xc0) == 64)
+                || (first == 198 && (second & 0xfe) == 18);
+    }
+
+    // Snapshot once: JDK may rewrite unspecified destinations to local addresses before NetHook runs.
+    private static final class LocalAddressesHolder {
+        static final Set<InetAddress> ADDRESSES = loadLocalAddresses();
+
+        private static Set<InetAddress> loadLocalAddresses() {
+            Set<InetAddress> addresses = new HashSet<>();
+            try {
+                Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+                if (interfaces != null) {
+                    while (interfaces.hasMoreElements()) {
+                        addresses.addAll(Collections.list(interfaces.nextElement().getInetAddresses()));
+                    }
+                }
+            } catch (SocketException | SecurityException e) {
+                log.warn("Unable to load local interface addresses; SSRF address checks will reject connections", e);
+                // Cache the failure as well, without allowing unknown destinations or poisoning class initialization.
+                return null;
+            }
+            return Collections.unmodifiableSet(addresses);
+        }
     }
 
 }

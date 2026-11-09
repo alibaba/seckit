@@ -1,26 +1,328 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.alibaba</groupId>
     <artifactId>seckit</artifactId>
     <packaging>jar</packaging>
-    <version>0.0.1</version>
+    <version>0.1.0</version>
     <name>alibaba-seckit</name>
     <description>Alibaba Security Kit</description>
     <url>https://github.com/alibaba/seckit</url>
-    <distributionManagement>
-        <snapshotRepository>
-            <id>central</id>
-            <url>https://central.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>central</id>
-            <url>https://central.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+    <scm>
+        <connection>scm:git:git://github.com/alibaba/seckit.git</connection>
+        <developerConnection>scm:git:git@github.com:alibaba/seckit.git</developerConnection>
+        <url>https://github.com/alibaba/seckit</url>
+    </scm>
+    <developers>
+        <developer>
+            <id>zhuyitian.zyt</id>
+            <name>zhuyitian.zyt</name>
+            <email>zhuyitian.zyt@alibaba-inc.com</email>
+        </developer>
+        <developer>
+            <id>junsong.fjs</id>
+            <name>junsong.fjs</name>
+            <email>junsong.fjs@alibaba-inc.com</email>
+        </developer>
+    </developers>
     <properties>
-        <custom.profile.argLine></custom.profile.argLine>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <custom.profile.argLine/>
+        <javac.executable.suffix/>
+        <java9.sourceDirectory>${project.basedir}/src/main/java9</java9.sourceDirectory>
+        <java9.build.outputDirectory>${project.build.directory}/classes-java9</java9.build.outputDirectory>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>toolchain-jdk8</id>
+            <activation>
+                <property>
+                    <name>!jdk8.home</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-toolchains-plugin</artifactId>
+                        <version>3.2.0</version>
+                        <executions>
+                            <execution>
+                                <id>require-jdk8</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>toolchain</goal>
+                                </goals>
+                                <configuration>
+                                    <toolchains>
+                                        <jdk>
+                                            <version>[1.8,1.9),[8,9)</version>
+                                        </jdk>
+                                    </toolchains>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-compile</id>
+                                <configuration>
+                                    <jdkToolchain>
+                                        <version>[1.8,1.9),[8,9)</version>
+                                    </jdkToolchain>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>default-testCompile</id>
+                                <configuration>
+                                    <jdkToolchain>
+                                        <version>[1.8,1.9),[8,9)</version>
+                                    </jdkToolchain>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <jdkToolchain>
+                                <version>[1.8,1.9),[8,9)</version>
+                            </jdkToolchain>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>toolchain-jdk11plus</id>
+            <activation>
+                <property>
+                    <name>!jdk9plus.home</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-toolchains-plugin</artifactId>
+                        <version>3.2.0</version>
+                        <executions>
+                            <execution>
+                                <id>require-jdk11plus</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>toolchain</goal>
+                                </goals>
+                                <configuration>
+                                    <toolchains>
+                                        <jdk>
+                                            <version>[11,)</version>
+                                        </jdk>
+                                    </toolchains>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>compile-java9</id>
+                                <configuration>
+                                    <jdkToolchain>
+                                        <version>[11,)</version>
+                                    </jdkToolchain>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>explicit-jdk8</id>
+            <activation>
+                <property>
+                    <name>jdk8.home</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-compile</id>
+                                <configuration>
+                                    <executable>${jdk8.home}/bin/javac${javac.executable.suffix}</executable>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>default-testCompile</id>
+                                <configuration>
+                                    <executable>${jdk8.home}/bin/javac${javac.executable.suffix}</executable>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <javadocExecutable>${jdk8.home}/bin/javadoc${javac.executable.suffix}</javadocExecutable>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.8</version>
+                        <executions>
+                            <execution>
+                                <id>check-explicit-jdk8</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <fail message="jdk8.home must point to JDK 8u121+ with bin/javac and jre/lib/rt.jar: ${jdk8.home}">
+                                            <condition>
+                                                <not>
+                                                    <and>
+                                                        <available file="${jdk8.home}/bin/javac${javac.executable.suffix}" type="file"/>
+                                                        <available file="${jdk8.home}/jre/lib/rt.jar" type="file"/>
+                                                    </and>
+                                                </not>
+                                            </condition>
+                                        </fail>
+                                        <fail message="JDK 8u121+ is required: ${jdk8.home}/jre/lib/rt.jar does not contain sun.misc.ObjectInputFilter.">
+                                            <condition>
+                                                <not>
+                                                    <resourcecount count="1">
+                                                        <zipfileset src="${jdk8.home}/jre/lib/rt.jar" includes="sun/misc/ObjectInputFilter.class"/>
+                                                    </resourcecount>
+                                                </not>
+                                            </condition>
+                                        </fail>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>explicit-jdk11plus</id>
+            <activation>
+                <property>
+                    <name>jdk9plus.home</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>compile-java9</id>
+                                <configuration>
+                                    <executable>${jdk9plus.home}/bin/javac${javac.executable.suffix}</executable>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.8</version>
+                        <executions>
+                            <execution>
+                                <id>check-explicit-jdk11plus</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <fail message="jdk9plus.home must point to JDK 11+ with bin/javac: ${jdk9plus.home}">
+                                            <condition>
+                                                <not>
+                                                    <available file="${jdk9plus.home}/bin/javac${javac.executable.suffix}" type="file"/>
+                                                </not>
+                                            </condition>
+                                        </fail>
+                                        <exec executable="${jdk9plus.home}/bin/javac${javac.executable.suffix}"
+                                              failonerror="true" outputproperty="jdk9plus.javac.version">
+                                            <arg value="-version"/>
+                                        </exec>
+                                        <fail message="jdk9plus.home must select JDK 11+, not ${jdk9plus.javac.version}.">
+                                            <condition>
+                                                <not>
+                                                    <matches string="${jdk9plus.javac.version}" pattern="^javac (1[1-9]|[2-9][0-9]|[1-9][0-9]{2,})([.+ -]|$)"/>
+                                                </not>
+                                            </condition>
+                                        </fail>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>jdk9+</id>
+            <activation>
+                <jdk>[9,)</jdk>
+            </activation>
+            <properties>
+                <custom.profile.argLine>--add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/sun.net=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED</custom.profile.argLine>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <!-- Extra classpath entries follow classesDirectory, so put the overlay first. -->
+                            <classesDirectory>${java9.build.outputDirectory}</classesDirectory>
+                            <additionalClasspathElements>
+                                <additionalClasspathElement>${project.build.outputDirectory}</additionalClasspathElement>
+                            </additionalClasspathElements>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>windows-javac</id>
+            <activation>
+                <os>
+                    <family>Windows</family>
+                </os>
+            </activation>
+            <properties>
+                <javac.executable.suffix>.exe</javac.executable.suffix>
+            </properties>
+        </profile>
+    </profiles>
+
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -68,12 +370,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.18.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>net.jodah</groupId>
             <artifactId>expiringmap</artifactId>
             <version>0.5.11</version>
@@ -83,7 +379,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.4</version>
+            <version>4.5.14</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -111,68 +407,104 @@
             <scope>provided</scope>
         </dependency>
 
-    </dependencies>
-    <licenses>
-        <license>
-            <name>The Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-        </license>
-    </licenses>
-    <scm>
-        <connection>scm:git:git://github.com/alibaba/seckit.git</connection>
-        <developerConnection>scm:git:git@github.com:alibaba/seckit.git</developerConnection>
-        <url>https://github.com/alibaba/seckit</url>
-    </scm>
-    <developers>
-        <developer>
-            <id>zhuyitian.zyt</id>
-            <name>zhuyitian.zyt</name>
-            <email>zhuyitian.zyt@alibaba-inc.com</email>
-        </developer>
-        <developer>
-            <id>junsong.fjs</id>
-            <name>junsong.fjs</name>
-            <email>junsong.fjs@alibaba-inc.com</email>
-        </developer>
-    </developers>
+        <dependency>
+            <groupId>org.unbescape</groupId>
+            <artifactId>unbescape</artifactId>
+            <version>1.1.6.RELEASE</version>
+        </dependency>
 
-    <profiles>
-        <profile>
-            <id>jdk9+</id>
-            <activation>
-                <jdk>[9,)</jdk>
-            </activation>
-            <properties>
-                <custom.profile.argLine>--add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/sun.net=ALL-UNNAMED</custom.profile.argLine>
-            </properties>
-        </profile>
-    </profiles>
+    </dependencies>
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.0.2</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources-java9</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${java9.build.outputDirectory}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.build.outputDirectory}/META-INF/versions/9</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>3.16.0</version>
+                <executions>
+                    <execution>
+                        <id>default-compile</id>
+                        <phase>compile</phase>
+                        <configuration>
+                            <source>1.8</source>
+                            <target>1.8</target>
+                            <compileSourceRoots>
+                                <compileSourceRoot>${project.build.sourceDirectory}</compileSourceRoot>
+                            </compileSourceRoots>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>compile-java9</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <release>9</release>
+                            <multiReleaseOutput>true</multiReleaseOutput>
+                            <compileSourceRoots>
+                                <compileSourceRoot>${java9.sourceDirectory}</compileSourceRoot>
+                            </compileSourceRoots>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <phase>test-compile</phase>
+                        <configuration>
+                            <source>1.8</source>
+                            <target>1.8</target>
+                        </configuration>
+                    </execution>
+                </executions>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <fork>true</fork>
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>3.5.1</version>
                 <configuration>
-                    <excludes/>
+                    <archive>
+                        <manifestEntries>
+                            <Multi-Release>true</Multi-Release>
+                        </manifestEntries>
+                    </archive>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.10</version>
+                <version>3.6.1</version>
                 <configuration>
-                    <argLine>-Dfile.encoding=UTF-8</argLine>
-                    <argLine>${custom.profile.argLine}</argLine>
+                    <argLine>-Dfile.encoding=UTF-8 ${custom.profile.argLine}</argLine>
+                    <!-- A selected compiler toolchain must not change the runtime being tested. -->
+                    <jvm>${java.home}/bin/java${javac.executable.suffix}</jvm>
+                    <forkCount>1</forkCount>
+                    <reuseForks>true</reuseForks>
                 </configuration>
             </plugin>
             <plugin>
@@ -192,7 +524,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.8</version>
+                <version>3.12.0</version>
+                <configuration>
+                    <source>8</source>
+                    <sourcepath>${project.build.sourceDirectory}</sourcepath>
+                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -227,4 +563,15 @@
             </plugin>
         </plugins>
     </build>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>central</id>
+            <url>https://central.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>central</id>
+            <url>https://central.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 </project>

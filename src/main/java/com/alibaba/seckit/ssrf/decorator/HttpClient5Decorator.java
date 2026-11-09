@@ -1,7 +1,7 @@
 package com.alibaba.seckit.ssrf.decorator;
 
-import com.alibaba.seckit.Decorator;
-import com.alibaba.seckit.AbstractDecorator;
+import com.alibaba.seckit.decorator.Decorator;
+import com.alibaba.seckit.decorator.AbstractDecorator;
 import com.alibaba.seckit.ssrf.interceptor.HttpClient5Interceptor;
 import com.google.auto.service.AutoService;
 import org.apache.hc.client5.http.impl.ChainElement;

@@ -423,7 +423,7 @@ public class FilterTest {
         assertEquals("jdbc:odps:https://localhost:8080", url);
     }
 
-    // https://help.aliyun.com/document_detail/476583.html?spm=a2c4g.216788.0.i0
+    // https://help.aliyun.com/document_detail/476583.html
     @Test
     public void testLindormFilter() throws MalformedURLException {
         String url = SecurityUtil.filterJdbcConnectionSource("jdbc:lindorm:table:url=https://www.aliyun.com/foo/bar;timeZone=Asia/Shanghai;serialization=protobuf");

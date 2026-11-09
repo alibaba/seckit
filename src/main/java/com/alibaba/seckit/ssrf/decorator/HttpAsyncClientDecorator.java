@@ -1,7 +1,7 @@
 package com.alibaba.seckit.ssrf.decorator;
 
-import com.alibaba.seckit.Decorator;
-import com.alibaba.seckit.AbstractDecorator;
+import com.alibaba.seckit.decorator.Decorator;
+import com.alibaba.seckit.decorator.AbstractDecorator;
 import com.alibaba.seckit.ssrf.interceptor.HttpClientInterceptor;
 import com.google.auto.service.AutoService;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
