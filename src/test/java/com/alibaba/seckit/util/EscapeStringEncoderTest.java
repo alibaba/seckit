@@ -1,6 +1,17 @@
 package com.alibaba.seckit.util;
 
+import com.alibaba.seckit.SecurityUtil;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import static org.junit.Assert.*;
 
 /**
@@ -95,5 +106,39 @@ public class EscapeStringEncoderTest {
 
         String decoded = escapeStringEncoder.decode(encoded);
         assertEquals(original, decoded);
+    }
+
+    @Test
+    public void testDuplicateEncodeCharKeepsLastMapping() {
+        EscapeStringEncoder escapeStringEncoder = new EscapeStringEncoder('%', new char[]{'%', '%'}, new char[]{'0', '1'});
+        assertEquals("%01", escapeStringEncoder.encode("%"));
+        assertEquals("%", escapeStringEncoder.decode("%01"));
+        assertEquals("%00", escapeStringEncoder.decode("%00"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCollidingEncodedValuesAreRejected() {
+        new EscapeStringEncoder('%', new char[]{'%', '+'}, new char[]{'0', '0'});
+    }
+
+    @Test
+    public void testMainClassesDoNotReferenceUndeclaredGuava() throws Exception {
+        // Guava is only a transitive provided dependency, so library users do not have it at runtime.
+        Path classes = Paths.get(SecurityUtil.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+        List<Path> offenders;
+        try (Stream<Path> files = Files.walk(classes)) {
+            offenders = files.filter(path -> path.toString().endsWith(".class"))
+                    .filter(EscapeStringEncoderTest::referencesGuava)
+                    .collect(Collectors.toList());
+        }
+        assertTrue("main classes reference Guava: " + offenders, offenders.isEmpty());
+    }
+
+    private static boolean referencesGuava(Path classFile) {
+        try {
+            return new String(Files.readAllBytes(classFile), StandardCharsets.ISO_8859_1).contains("com/google/common/");
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
     }
 }

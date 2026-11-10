@@ -45,7 +45,7 @@ English | [简体中文](README_CN.md)
 <dependency>
     <groupId>com.alibaba</groupId>
     <artifactId>seckit</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
     <scope>compile</scope>
 </dependency>
 ```
@@ -53,7 +53,7 @@ English | [简体中文](README_CN.md)
 ### Gradle Dependency
 
 ```gradle
-implementation 'com.alibaba:seckit:0.1.0'
+implementation 'com.alibaba:seckit:0.1.1'
 ```
 
 ## Usage Guide

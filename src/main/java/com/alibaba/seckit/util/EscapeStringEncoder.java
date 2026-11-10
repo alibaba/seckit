@@ -1,7 +1,7 @@
 package com.alibaba.seckit.util;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author mingyi
@@ -11,7 +11,8 @@ public class EscapeStringEncoder {
     private char[] encodeChars = new char[]{'%', '+', ' ', '&', '?', '=', ';', ':', '*', '[', ']', '{', '}', '(', ')', '|', '\\', '/', '\'', '"', '<', '>', '^', '`', '~', ','};
     private char[] availableChars = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
-    private final BiMap<Character, String> encodeMap = HashBiMap.create();
+    private final Map<Character, String> encodeMap = new HashMap<>();
+    private final Map<String, Character> decodeMap = new HashMap<>();
     
     EscapeStringEncoder() {
         initMapping();
@@ -52,8 +53,9 @@ public class EscapeStringEncoder {
             char c = str.charAt(i);
             if (c == escapeChar && i + 2 < str.length()) {
                 String code = str.substring(i, i + 3);
-                if (encodeMap.inverse().containsKey(code)) {
-                    sb.append(encodeMap.inverse().get(code));
+                Character decoded = decodeMap.get(code);
+                if (decoded != null) {
+                    sb.append(decoded);
                     i += 2;
                     continue;
                 }
@@ -85,7 +87,15 @@ public class EscapeStringEncoder {
             
             String encoded = String.valueOf(escapeChar) + availableChars[firstIndex] + availableChars[secondIndex];
             
-            encodeMap.put(encodeChar, encoded);
+            Character existing = decodeMap.get(encoded);
+            if (existing != null && existing != encodeChar) {
+                throw new IllegalArgumentException("value already present: " + encoded);
+            }
+            String previous = encodeMap.put(encodeChar, encoded);
+            if (previous != null) {
+                decodeMap.remove(previous);
+            }
+            decodeMap.put(encoded, encodeChar);
         }
     }
 }

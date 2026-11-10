@@ -45,14 +45,14 @@
 <dependency>
     <groupId>com.alibaba</groupId>
     <artifactId>seckit</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
 </dependency>
 ```
 
 ### Gradle依赖
 
 ```gradle
-implementation 'com.alibaba:seckit:0.1.0'
+implementation 'com.alibaba:seckit:0.1.1'
 ```
 
 ## 使用指南

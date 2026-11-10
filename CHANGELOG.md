@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1
+
+### Fixed
+
+- Remove the undeclared Guava runtime dependency from SSRF URL handling, which caused `NoClassDefFoundError` in applications without Guava.
+
 ## 0.1.0
 
 ### Added

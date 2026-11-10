@@ -10,4 +10,4 @@ Include the affected SDK version, JDK version, relevant configuration, impact, a
 
 ## Versions
 
-Please identify the affected release or commit and whether the issue reproduces on the latest available version. Version `0.1.0` is currently declared in the project metadata. No response-time commitment or maintenance policy for older versions is established by this document; confirm these with the maintainers.
+Please identify the affected release or commit and whether the issue reproduces on the latest available version. Version `0.1.1` is currently declared in the project metadata. No response-time commitment or maintenance policy for older versions is established by this document; confirm these with the maintainers.
